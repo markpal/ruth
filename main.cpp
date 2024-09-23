@@ -92,8 +92,9 @@ int _i;
 
         int start = (BLOCKI != BLOCKJ);
 
-         // parallel
+
          for (k = (-BS+1)*start; k < BS; k++)
+             // parallel
             for (i =k; i < BS; i++) {
                 j = i - k;
                 if (i >= 0 && j < BS) {
