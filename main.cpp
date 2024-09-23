@@ -137,6 +137,38 @@ int _i;
     }
 
 
+/*
+    for (int c0 = 0; c0 <= N; c0 += 1){
+        cout << "synch" << endl;
+        for (int c1 = c0; c1 < N; c1 += 1)
+            cout << -c0 + c1 << " " << c1 << endl;
+    }
+    */
+
+
+
+   /* for (int c0 = 0; c0 < 2; c0 += 1){
+        cout << "synch" << endl;
+        for (int c1 = c0; c1 < 2; c1 += 1)
+            for (int c2 = max(0, 5 * c0 - c1 + 1); c2 < min(4 * c0 + c1, N + 4 * c0 - 4 * c1); c2 += 1)
+                for (int c3 = max(4 * c1, -4 * c0 + 4 * c1 + c2); c3 < min(min(N, 5 * c1), -5 * c0 + 5 * c1 + c2); c3 += 1)
+                    //   (-c0 + c1, c1, -c2 + c3, c3);
+                    cout << -c0 + c1 << " " << c1 << ":" << -c2 + c3 << " " << c3 << endl;
+    }*/
+    for (int c0 = 0; c0 <= N/4; c0 += 1) {
+        cout << "synch tile" << endl;
+        for (int c1 = c0; c1 <= N / 4; c1 += 1)
+            for (int c2 = max(0, 4 * c0 - 3); c2 <= min(4 * c0 + 3, N + 4 * c0 - 4 * c1 - 1); c2 += 1) {
+                cout << "synch statement" << endl;
+                for (int c3 = max(-4 * c0 + 4 * c1, 4 * c1 - c2);
+                     c3 <= min(min(-4 * c0 + 4 * c1 + 3, N - c2 - 1), 4 * c1 - c2 + 3); c3 += 1)
+                    cout << -c0 + c1 << " " << c1 << ":" << c2 + c3 << " " << c3 << endl;
+            }
+    }
+
+
+
+
 
     return 0;
 }
