@@ -116,10 +116,10 @@ int _i;
     int N = 7;
     for (i = N-1; i >= 0; i--) {
         for (j = i+1; j < N; j++) {
-           // for (k = 0; k < j-i; k++) {
-           //     S[i][j] = max(S[i][k+i] + S[k+i+1][j], S[i][j]);
-           // }
-            S[i][j] = max(S[i][j], max(S[i+1][j], S[i][j-1]));  /// ?????
+            for (k = 0; k < j-i; k++) {
+                S[i][j] = max(S[i][k+i] + S[k+i+1][j], S[i][j]);
+            }
+           // S[i][j] = max(S[i][j], max(S[i+1][j], S[i][j-1]));  /// ?????
             S[i][j] = max(S[i][j], S[i+1][j-1] + paired(seq[i],seq[j]));
 
            // cout << i << "|" << j << "|" << seq[i] << seq[j] << "|" << S[i][j] << endl;
