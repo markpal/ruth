@@ -7,6 +7,7 @@ using namespace std;
 const int N = 8;
 int C[N][N];
 int S[N][N];
+int B[N][N];
 
 char SEQi[8] = {' ', 'G','G','U','C','C','A','C'};
 char SEQj[8] = {'G','G','U','C','C','A','C', ' '};
@@ -57,15 +58,18 @@ int main() {
         for(j=0; j<N; j++){
             C[i][j] = INT_MIN;
             S[i][j] = INT_MIN;
+            B[i][j] = INT_MIN;
         }
     }
 
     for(i=0; i<N; i++){
          C[i][i] = 0;
          S[i][i] = 0;
+         B[i][i] = 0;
          if(i+1 < N) {
              C[i][i + 1] = 0;
              S[i][i + 1] = 0;
+             B[i][i + 1] = 0;
          }
     }
 
@@ -138,18 +142,88 @@ int _i;
     }
 
 
+
 cout << "barvinok" << endl;
-    for (int c0 = 0; c0 <= N/4; c0 += 1) {
-        cout << "synch tile" << endl;
-        for (int c1 = c0; c1 <= N / 4; c1 += 1)
-            for (int c2 = max(0, 4 * c0 - 3); c2 <= min(4 * c0 + 3, N + 4 * c0 - 4 * c1 - 1); c2 += 1) {
-                cout << "synch statement" << endl;
-                for (int c3 = max(-4 * c0 + 4 * c1, 4 * c1 - c2);
-                     c3 <= min(min(-4 * c0 + 4 * c1 + 3, N - c2 - 1), 4 * c1 - c2 + 3); c3 += 1)
-                    cout << -c0 + c1 << " " << c1 << ":" << c2 + c3 << " " << c3 << endl;
-            }
+    /*
+     S :=  [N] -> { [jj,ii,j,i] -> [ii-jj,ii,i-j,i] : 0 <= jj <= N/4 and 0 <= ii <= N/4 and
+0 <= i < N and 0 <= j <=N and ii*4 <= i < (ii+1)*4 and jj*4 <= j < (jj+1)*4 and ((ii=jj and i>j) or ii>jj)};
+codegen S;
+     */
+
+for (int c0 = 0; c0 <= (N - 1) / 4; c0 += 1)
+  for (int c1 = c0; c1 <= min((N - 1) / 4, (N + c0 + 2) / 4 - 1); c1 += 1)
+    for (int c2 = max(1, 4 * c0 - 3); c2 <= min(4 * c0 + 3, N + 4 * c0 - 4 * c1 - 1); c2 += 1) {
+      if (c0 >= 1) {
+        for (int c3 = max(4 * c1, -4 * c0 + 4 * c1 + c2); c3 <= min(min(N - 1, 4 * c1 + 3), -4 * c0 + 4 * c1 + c2 + 3); c3 += 1)
+       //   (-c0 + c1, c1, -c2 + c3, c3);
+          B[-c2+c3][c3] = max(max(B[-c2+c3 + 1][c3], B[-c2+c3][c3 - 1]),
+                             B[-c2+c3 + 1][c3 - 1] + paired(seq[-c2+c3], seq[c3]));
+         // cout << -c0 + c1 << " " << c1 << ": " << -c2+c3 << " " << c3 << endl;
+      } else {
+       for (int c3 = 4 * c1 + c2; c3 <= min(N - 1, 4 * c1 + 3); c3 += 1)
+         // (c1, c1, -c2 + c3, c3);
+        //  cout << c1 << " " << c1 << ": " << -c2+c3 << " " << c3 << endl;
+           B[-c2+c3][c3] = max(max(B[-c2+c3 + 1][c3], B[-c2+c3][c3 - 1]),
+                               B[-c2+c3 + 1][c3 - 1] + paired(seq[-c2+c3], seq[c3]));
+      }
     }
 
+/*
+    for (int c0 = 0; c0 <= (N - 1) / 4; c0 += 1)
+        for (int c1 = c0; c1 <= min((N - 1) / 4, (N + c0 + 2) / 4 - 1); c1 += 1)
+            for (int c2 = max(1, 4 * c0 - 3); c2 <= min(4 * c0 + 3, N + 4 * c0 - 4 * c1 - 1); c2 += 1) {
+                cout << "synch" << endl;
+                if (c0 >= 1) {
+                    for (int c3 = max(-4 * c0 + 4 * c1, 4 * c1 - c2); c3 <= min(min(-4 * c0 + 4 * c1 + 3, N - c2 - 1), 4 * c1 - c2 + 3); c3 += 1)
+                     //   (-c0 + c1, c1, c2 + c3, c3);
+                    {
+                        cout << -c0 + c1 << " " << c1 << ": " << c3 << " " << c2 + c3 << endl;
+                        B[c3][c2+c3] = max(max(B[c3 + 1][c2+c3], B[c3][c2+c3 - 1]),
+                                             B[c3 + 1][c3+c2 - 1] + paired(seq[c3], seq[c2+c3]));
+                    }
+                } else {
+                    for (int c3 = 4 * c1; c3 <= min(N - c2 - 1, 4 * c1 - c2 + 3); c3 += 1) {
+                        //     (c1, c1, c2 + c3, c3);
+                        cout << c1 << " " << c1 << ": " << c3 << " " << c2 + c3 << endl;
+                       B[c3][c2 + c3] = max(max(B[c3 + 1][c2 + c3], B[c3][c2 + c3 - 1]),
+                                            B[c3 + 1][c3 + c2 - 1] + paired(seq[c3], seq[c2 + c3]));
+                    }
+                }
+            }
+
+
+*/
+
+
+
+    cout << endl << endl;
+    for(i=0; i<N; i++){
+        for(j=0; j<N; j++){
+            if(B[i][j] < 0)
+                cout << "";
+            else
+                cout << B[i][j];
+            cout << "\t";
+        }
+        cout << "\n";
+    }
+    cout << endl;
+/*
+    for (int c0 = 0; c0 <= (N - 1) / 4; c0 += 1)
+        for (int c1 = c0; c1 <= min((N - 1) / 4, (N + c0 + 2) / 4 - 1); c1 += 1)
+            for (int c2 = max(1, 4 * c0 - 3); c2 <= min(4 * c0 + 3, N + 4 * c0 - 4 * c1 - 1); c2 += 1) {
+                cout << "synch" << endl;
+                if (c0 >= 1) {
+                    for (int c3 = max(4 * c1, -4 * c0 + 4 * c1 + c2); c3 <= min(min(N - 1, 4 * c1 + 3), -4 * c0 + 4 * c1 + c2 + 3); c3 += 1)
+                       // (-c0 + c1, c1, c3, -c2 + c3);
+                    cout << -c0+c1 << " " << c1 << ": " << c3 << " " << -c2 + c3 << endl;
+                } else {
+                    for (int c3 = 4 * c1 + c2; c3 <= min(N - 1, 4 * c1 + 3); c3 += 1)
+                        cout << c1 << " " << c1 << ": " << c3 << " " << -c2 + c3 << endl;
+                }
+            }
+*/
+    exit(0);
 cout << "parallel dapt" << endl;
     for (int w0 = 1; w0 < N; w0++) {
         cout << "synch" << endl;
