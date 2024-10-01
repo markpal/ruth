@@ -1,0 +1,4 @@
+S :=  [N] -> { [jj,ii,j,i,k] -> [ii-jj,ii,i-j,i,k] : 0 <= k <= i-j and  0 <= jj <= N/4 and 0 <= ii <= N/4 and
+0 <= i < N and 0 <= j <=N and ii*4 <= i < (ii+1)*4 and jj*4 <= j < (jj+1)*4 and ((ii=jj and i>j) or ii>jj)};
+codegen S;
+marek@marek
