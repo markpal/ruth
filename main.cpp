@@ -2,12 +2,13 @@
 #include <cmath>
 #include <climits>
 #include <vector>
+#include <omp.h>
 
-#define min(a,b) (((a)<(b))?(a):(b))
-#define max(a,b) (((a)>(b))?(a):(b))
+////#define min(a,b) (((a)<(b))?(a):(b))
+//#define max(a,b) (((a)>(b))?(a):(b))
 #define MIN(a,b) (((a)<(b))?(a):(b))
 #define MAX(a,b) (((a)>(b))?(a):(b))
-#define floord(n,d) floor(((double)(n))/((double)(d)))
+//#define floord(n,d) floor(((double)(n))/((double)(d)))
 #define ceild(n,d) ceil(((double)(n))/((double)(d)))
 
 using namespace std;
@@ -181,11 +182,13 @@ S :=  [N] -> { [jj,ii,j,i,k] -> [ii-jj,ii,i-j,i,k] : 0 <= k < i-j and  0 <= jj <
 0 <= i < N and 0 <= j <=N and ii*4 <= i < (ii+1)*4 and jj*4 <= j < (jj+1)*4 and ((ii=jj and i>j) or ii>jj)};
 codegen S;
      */
-
-    for (int c0 = 0; c0 <= floord(N - 1, 16); c0 += 1)  // serial loop
-        for (int c1 = c0; c1 <= min((N - 1) / 16, floord(N + c0 - 2, 16)); c1 += 1) // parallel loop  blocks
+    omp_set_nested(1);
+    for (int c0 = 0; c0 <= (N - 1)/16; c0 += 1)  // serial loop
+ //    #pragma omp parallel for
+        for (int c1 = c0; c1 <= min((N - 1) / 16, (N + c0 - 2 )/ 16); c1 += 1) // parallel loop  blocks
             for (int c2 = max(1, 16 * c0 - 15); c2 <= min(16 * c0 + 15, N + 16 * c0 - 16 * c1 - 1); c2 += 1) { // serial loop
                 if (c0 >= 1) {
+                //    #pragma omp parallel for
                     for (int c3 = max(16 * c1, -16 * c0 + 16 * c1 + c2); c3 <= min(min(N - 1, 16 * c1 + 15), -16 * c0 + 16 * c1 + c2 + 15); c3 += 1) {   // parallel loop threads
                         for (int c4 = 0; c4 < c2; c4 += 1) // serial
                             B[-c2 + c3][c3] = max(B[-c2+c3][-c2+c3+c4] + B[-c2 + c3 + c4 + 1][c3], B[-c2 + c3][c3]);
@@ -193,7 +196,7 @@ codegen S;
                         cout << c0 << " " << c1 << " " << c2 << " " << c3 << ": " << -c2 + c3 << " " << c3 << endl;
                     }
                 } else {
-
+                  //  #pragma omp parallel for
                     for (int c3 = 16 * c1 + c2; c3 <= min(N - 1, 16 * c1 + 15); c3 += 1) {   // parallel loop threads
                         for (int c4 = 0; c4 < c2; c4 += 1) {  // serial
                             B[-c2 + c3][c3] = max(B[-c2 + c3][-c2 + c3 + c4] + B[-c2 + c3 + c4 + 1][c3],
