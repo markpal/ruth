@@ -1,17 +1,28 @@
 #include <iostream>
 #include <cmath>
 #include <climits>
+#include <vector>
+
+#define min(a,b) (((a)<(b))?(a):(b))
+#define max(a,b) (((a)>(b))?(a):(b))
+#define MIN(a,b) (((a)<(b))?(a):(b))
+#define MAX(a,b) (((a)>(b))?(a):(b))
+#define floord(n,d) floor(((double)(n))/((double)(d)))
+#define ceild(n,d) ceil(((double)(n))/((double)(d)))
 
 using namespace std;
 
 const int N = 8;
 int C[N][N];
-int S[N][N];
-int B[N][N];
+
+
 
 char SEQi[8] = {' ', 'G','G','U','C','C','A','C'};
 char SEQj[8] = {'G','G','U','C','C','A','C', ' '};
 string seq = "GGUCCAC";
+string seqq = "GUACGUACGUACGUACGUACGUACGUACGUAC";
+vector<vector<int>> S(seqq.length(), vector<int>(seqq.length()));
+vector<vector<int>> B(seqq.length(), vector<int>(seqq.length()));
 
 int paired(char a1, char a2)
 {
@@ -65,71 +76,92 @@ int main() {
     for(i=0; i<N; i++){
          C[i][i] = 0;
          S[i][i] = 0;
-         B[i][i] = 0;
+
          if(i+1 < N) {
              C[i][i + 1] = 0;
              S[i][i + 1] = 0;
-             B[i][i + 1] = 0;
+
          }
     }
 
+    /*
+   int _i;
 
-int _i;
-        // Wypisuje elementy na przekątnej d
-      for (k = -BS+1; k < BS; k++) {
-            for (i = k; i < BS; i++) {
-                j = i - k;
-                if(i>= 0 && j < BS)
-                  cout << i << "," << j << " ";
-            }
-            cout << endl;
-        }
-
-
-
-    for(D=0; D<BLOCKS; D++) // diagonal only N  (UR triangle)
-    // parallel
-    for(t=D; t<BLOCKS; t++) {
-        int BLOCKI = t;
-        int BLOCKJ = t - D;
-        cout << BLOCKI << "  " << BLOCKJ << endl;
-
-        int start = (BLOCKI != BLOCKJ);
+           // Wypisuje elementy na przekątnej d
+         for (k = -BS+1; k < BS; k++) {
+               for (i = k; i < BS; i++) {
+                   j = i - k;
+                   if(i>= 0 && j < BS)
+                     cout << i << "," << j << " ";
+               }
+               cout << endl;
+           }
 
 
-         for (k = (-BS+1)*start; k < BS; k++)
-             // parallel
-            for (i =k; i < BS; i++) {
-                j = i - k;
-                if (i >= 0 && j < BS) {
-                    int _i = BLOCKI * BS + i;
-                    int _j = BLOCKJ * BS + j;
-                    cout << BLOCKI << "  " << BLOCKJ << "   : " << _j << "," << _i << "| " << SEQj[_j] << SEQi[_i] << " |b " << paired(SEQj[_j], SEQi[_i]);
 
-                    if(_i > _j + 1) {
-                        cout << "| " << C[_j + 1][_i] << "," << C[_j][_i - 1] <<"," <<  C[_j + 1][_i - 1] << " | ";
-                        C[_j][_i] = max(max(C[_j + 1][_i], C[_j][_i - 1]), C[_j + 1][_i - 1] + paired(SEQj[_j], SEQi[_i]));
-                        cout << "| " << C[_j][_i] << " | ";
-                    }
-                    cout << endl;
-                }
-            }
-    }
-    showMatrix(C);
+       for(D=0; D<BLOCKS; D++) // diagonal only N  (UR triangle)
+       // parallel
+       for(t=D; t<BLOCKS; t++) {
+           int BLOCKI = t;
+           int BLOCKJ = t - D;
+           cout << BLOCKI << "  " << BLOCKJ << endl;
+
+           int start = (BLOCKI != BLOCKJ);
+
+
+            for (k = (-BS+1)*start; k < BS; k++)
+                // parallel
+               for (i =k; i < BS; i++) {
+                   j = i - k;
+                   if (i >= 0 && j < BS) {
+                       int _i = BLOCKI * BS + i;
+                       int _j = BLOCKJ * BS + j;
+                       cout << BLOCKI << "  " << BLOCKJ << "   : " << _j << "," << _i << "| " << SEQj[_j] << SEQi[_i] << " |b " << paired(SEQj[_j], SEQi[_i]);
+
+                       if(_i > _j + 1) {
+                           cout << "| " << C[_j + 1][_i] << "," << C[_j][_i - 1] <<"," <<  C[_j + 1][_i - 1] << " | ";
+                           C[_j][_i] = max(max(C[_j + 1][_i], C[_j][_i - 1]), C[_j + 1][_i - 1] + paired(SEQj[_j], SEQi[_i]));
+                           cout << "| " << C[_j][_i] << " | ";
+                       }
+                       cout << endl;
+                   }
+               }
+       }
+       showMatrix(C);
+       */
     cout << "Uday loop" << endl;
-    int N = 7;
+    int N = seqq.length();
+
+    for(i=0; i<N; i++) {
+        for(j=0; j<N; j++){
+            S[i][j] = INT_MIN;
+            B[i][j] = INT_MIN;
+        }
+    }
+
+    for(i=0; i<N; i++){
+        S[i][i] = 0;
+        B[i][i] = 0;
+        if(i+1 < N) {
+            S[i][i + 1] = 0;
+            S[i+1][i] = 0;
+            B[i][i + 1] = 0;
+            B[i+1][i] = 0;
+        }
+    }
     for (i = N-1; i >= 0; i--) {
         for (j = i+1; j < N; j++) {
             for (k = 0; k < j-i; k++) {
                 S[i][j] = max(S[i][k+i] + S[k+i+1][j], S[i][j]);
             }
-           // S[i][j] = max(S[i][j], max(S[i+1][j], S[i][j-1]));  /// ?????
-            S[i][j] = max(S[i][j], S[i+1][j-1] + paired(seq[i],seq[j]));
 
-           // cout << i << "|" << j << "|" << seq[i] << seq[j] << "|" << S[i][j] << endl;
+            S[i][j] = max(S[i][j], S[i+1][j-1] + paired(seqq[i],seqq[j]));
+
+          //  cout << i << "|" << j << "|" << seqq[i] << seqq[j] << "|" << S[i][j] << " , " << paired(seqq[i],seqq[j])  << "| " << S[i+1][j-1]<< endl;
 
         }
     }
+
     for(i=0; i<N; i++){
         for(j=0; j<N; j++){
             if(S[i][j] < 0)
@@ -145,54 +177,34 @@ int _i;
 
 cout << "barvinok" << endl;
     /*
-     S :=  [N] -> { [jj,ii,j,i] -> [ii-jj,ii,i-j,i] : 0 <= jj <= N/4 and 0 <= ii <= N/4 and
+S :=  [N] -> { [jj,ii,j,i,k] -> [ii-jj,ii,i-j,i,k] : 0 <= k < i-j and  0 <= jj <= N/4 and 0 <= ii <= N/4 and
 0 <= i < N and 0 <= j <=N and ii*4 <= i < (ii+1)*4 and jj*4 <= j < (jj+1)*4 and ((ii=jj and i>j) or ii>jj)};
 codegen S;
      */
 
-for (int c0 = 0; c0 <= (N - 1) / 4; c0 += 1)
-  for (int c1 = c0; c1 <= min((N - 1) / 4, (N + c0 + 2) / 4 - 1); c1 += 1)
-    for (int c2 = max(1, 4 * c0 - 3); c2 <= min(4 * c0 + 3, N + 4 * c0 - 4 * c1 - 1); c2 += 1) {
-      if (c0 >= 1) {
-        for (int c3 = max(4 * c1, -4 * c0 + 4 * c1 + c2); c3 <= min(min(N - 1, 4 * c1 + 3), -4 * c0 + 4 * c1 + c2 + 3); c3 += 1)
-       //   (-c0 + c1, c1, -c2 + c3, c3);
-          B[-c2+c3][c3] = max(max(B[-c2+c3 + 1][c3], B[-c2+c3][c3 - 1]),
-                             B[-c2+c3 + 1][c3 - 1] + paired(seq[-c2+c3], seq[c3]));
-         // cout << -c0 + c1 << " " << c1 << ": " << -c2+c3 << " " << c3 << endl;
-      } else {
-       for (int c3 = 4 * c1 + c2; c3 <= min(N - 1, 4 * c1 + 3); c3 += 1)
-         // (c1, c1, -c2 + c3, c3);
-        //  cout << c1 << " " << c1 << ": " << -c2+c3 << " " << c3 << endl;
-           B[-c2+c3][c3] = max(max(B[-c2+c3 + 1][c3], B[-c2+c3][c3 - 1]),
-                               B[-c2+c3 + 1][c3 - 1] + paired(seq[-c2+c3], seq[c3]));
-      }
-    }
-
-/*
-    for (int c0 = 0; c0 <= (N - 1) / 4; c0 += 1)
-        for (int c1 = c0; c1 <= min((N - 1) / 4, (N + c0 + 2) / 4 - 1); c1 += 1)
-            for (int c2 = max(1, 4 * c0 - 3); c2 <= min(4 * c0 + 3, N + 4 * c0 - 4 * c1 - 1); c2 += 1) {
-                cout << "synch" << endl;
+    for (int c0 = 0; c0 <= floord(N - 1, 16); c0 += 1)  // serial loop
+        for (int c1 = c0; c1 <= min((N - 1) / 16, floord(N + c0 - 2, 16)); c1 += 1) // parallel loop  blocks
+            for (int c2 = max(1, 16 * c0 - 15); c2 <= min(16 * c0 + 15, N + 16 * c0 - 16 * c1 - 1); c2 += 1) { // serial loop
                 if (c0 >= 1) {
-                    for (int c3 = max(-4 * c0 + 4 * c1, 4 * c1 - c2); c3 <= min(min(-4 * c0 + 4 * c1 + 3, N - c2 - 1), 4 * c1 - c2 + 3); c3 += 1)
-                     //   (-c0 + c1, c1, c2 + c3, c3);
-                    {
-                        cout << -c0 + c1 << " " << c1 << ": " << c3 << " " << c2 + c3 << endl;
-                        B[c3][c2+c3] = max(max(B[c3 + 1][c2+c3], B[c3][c2+c3 - 1]),
-                                             B[c3 + 1][c3+c2 - 1] + paired(seq[c3], seq[c2+c3]));
+                    for (int c3 = max(16 * c1, -16 * c0 + 16 * c1 + c2); c3 <= min(min(N - 1, 16 * c1 + 15), -16 * c0 + 16 * c1 + c2 + 15); c3 += 1) {   // parallel loop threads
+                        for (int c4 = 0; c4 < c2; c4 += 1) // serial
+                            B[-c2 + c3][c3] = max(B[-c2+c3][-c2+c3+c4] + B[-c2 + c3 + c4 + 1][c3], B[-c2 + c3][c3]);
+                        B[-c2 + c3][c3] = max(B[-c2 + c3][c3],  B[-c2 + c3 + 1][c3 - 1] + paired(seqq[-c2 + c3], seqq[c3]));
+                        cout << c0 << " " << c1 << " " << c2 << " " << c3 << ": " << -c2 + c3 << " " << c3 << endl;
                     }
                 } else {
-                    for (int c3 = 4 * c1; c3 <= min(N - c2 - 1, 4 * c1 - c2 + 3); c3 += 1) {
-                        //     (c1, c1, c2 + c3, c3);
-                        cout << c1 << " " << c1 << ": " << c3 << " " << c2 + c3 << endl;
-                       B[c3][c2 + c3] = max(max(B[c3 + 1][c2 + c3], B[c3][c2 + c3 - 1]),
-                                            B[c3 + 1][c3 + c2 - 1] + paired(seq[c3], seq[c2 + c3]));
+
+                    for (int c3 = 16 * c1 + c2; c3 <= min(N - 1, 16 * c1 + 15); c3 += 1) {   // parallel loop threads
+                        for (int c4 = 0; c4 < c2; c4 += 1) {  // serial
+                            B[-c2 + c3][c3] = max(B[-c2 + c3][-c2 + c3 + c4] + B[-c2 + c3 + c4 + 1][c3],
+                                                  B[-c2 + c3][c3]);
+                        }
+                        B[-c2 + c3][c3] = max(B[-c2 + c3][c3],  B[-c2 + c3 + 1][c3 - 1] + paired(seqq[-c2 + c3], seqq[c3]));
+                        cout << c0 << " " << c1 << " " << c2 <<  " " << c3 << ": " << -c2 + c3 << " " << c3 << endl;
                     }
                 }
             }
 
-
-*/
 
 
 
@@ -208,105 +220,15 @@ for (int c0 = 0; c0 <= (N - 1) / 4; c0 += 1)
         cout << "\n";
     }
     cout << endl;
-/*
-    for (int c0 = 0; c0 <= (N - 1) / 4; c0 += 1)
-        for (int c1 = c0; c1 <= min((N - 1) / 4, (N + c0 + 2) / 4 - 1); c1 += 1)
-            for (int c2 = max(1, 4 * c0 - 3); c2 <= min(4 * c0 + 3, N + 4 * c0 - 4 * c1 - 1); c2 += 1) {
-                cout << "synch" << endl;
-                if (c0 >= 1) {
-                    for (int c3 = max(4 * c1, -4 * c0 + 4 * c1 + c2); c3 <= min(min(N - 1, 4 * c1 + 3), -4 * c0 + 4 * c1 + c2 + 3); c3 += 1)
-                       // (-c0 + c1, c1, c3, -c2 + c3);
-                    cout << -c0+c1 << " " << c1 << ": " << c3 << " " << -c2 + c3 << endl;
-                } else {
-                    for (int c3 = 4 * c1 + c2; c3 <= min(N - 1, 4 * c1 + 3); c3 += 1)
-                        cout << c1 << " " << c1 << ": " << c3 << " " << -c2 + c3 << endl;
-                }
-            }
-*/
-    exit(0);
-cout << "parallel dapt" << endl;
-    for (int w0 = 1; w0 < N; w0++) {
-        cout << "synch" << endl;
-        for (int h0 = -N + w0 + 1; h0 <= 0; h0++) {
-            for (int i3 = 0; i3 < w0; i3++) {
-              //  cpu_S[-h0][w0 - h0] = MAX(cpu_S[-h0][-h0 + i3] + cpu_S[-h0 + i3 + 1][w0 - h0], cpu_S[-h0][w0 - h0]);
-            }
-            //cpu_S[-h0][w0 - h0] = MAX(cpu_S[-h0][w0 - h0], cpu_S[-h0 + 1][w0 - h0 - 1] + isPair_host(-h0, w0 - h0));
-          cout << -h0 << " " << w0 - h0 << endl;
-        }
-    }
-    cout << endl;
-    cout << "parallel pluto" << endl;
-    int t1, t2, t3, t4, t5, t6, t7, t9;
-    int lb, ub, lbp, ubp, lb2, ub2;
-    register int lbv, ubv;
-/* Start of CLooG code */
-    for (t2=1;t2<=6;t2++) {
-        lbp=t2;
-        ubp=6;
-        cout << "synch" << endl;
-//#pragma omp parallel for private(lbv,ubv,t5,t6,t7)
-        for (t4=lbp;t4<=ubp;t4++) {
-            for (t6=0;t6<=t2-1;t6++) {
-              //  S[(-t2+t4)][t4] = S[(-t2+t4)][t6+(-t2+t4)] + S[t6+(-t2+t4)+1][t4] + S[(-t2+t4)][t4];;
-            }
-            //S[(-t2+t4)][t4] = S[(-t2+t4)][t4] + S[(-t2+t4)+1][t4-1];;
-            cout << -t2+t4 << " " << t4 << endl;
-        }
-    }
 
-    for (t2=0;t2<=3;t2++) {
-        lbp=t2;
-        ubp=3;
-#pragma omp parallel for private(lbv,ubv,t5,t6,t7,t8,t9,t10)
-        for (t4=lbp;t4<=ubp;t4++) {
-            for (t5=max(-5,2*t2-2*t4);t5<=min(0,2*t2-2*t4+1);t5++) {
-                for (t7=max(2*t4,-t5+1);t7<=min(6,2*t4+1);t7++) {
-                    for (t9=0;t9<=t5+t7-1;t9++) {
-                        S[-t5][t7] = S[-t5][t9+-t5] + S[t9+-t5+1][t7] + S[-t5][t7];;
-                    }
-                    S[-t5][t7] = S[-t5][t7] + S[-t5+1][t7-1];;
-                }
+    for(i=0; i<N; i++)
+        for(j=0; j<N; j++)
+            if(S[i][j] != B[i][j]){
+                cout << "error" << endl;
+                exit(0);
             }
-        }
-    }
-/*
-    cout << "parallel tile pluto" << endl;
-    for (t2=-1;t2<=1;t2++) {
-        lbp=max(0,t2);
-        ubp=1;
-        cout << "synch" << endl;
-//#pragma omp parallel for private(lbv,ubv,t5,t6,t7,t8,t9,t10)
-        for (t4=lbp;t4<=ubp;t4++) {
-            for (t5=max(max(-5,4*t2-4*t4),-4*t4-2);t5<=min(0,4*t2-4*t4+3);t5++) {
-                for (t7=max(4*t4,-t5+1);t7<=min(6,4*t4+3);t7++) {
-                    for (t9=0;t9<=t5+t7-1;t9++) {
-                     //   S[-t5][t7] = S[-t5][t9+-t5] + S[t9+-t5+1][t7] + S[-t5][t7];;
-                    }
-                   // S[-t5][t7] = S[-t5][t7] + S[-t5+1][t7-1];;
-                   cout << t2 << " " << t4 << ":" << -t5 << " " << t7 << endl;
-                }
-            }
-        }
-    }*/
-    cout << "parallel tile pluto" << endl;
-    for (t2=0;t2<=3;t2++) {
-        lbp=t2;
-        ubp=3;
-        cout << "synch" << endl;
-//#pragma omp parallel for private(lbv,ubv,t5,t6,t7,t8,t9,t10)
-        for (t4=lbp;t4<=ubp;t4++) {
-            for (t5=max(-5,2*t2-2*t4);t5<=min(0,2*t2-2*t4+1);t5++) {
-                for (t7=max(2*t4,-t5+1);t7<=min(6,2*t4+1);t7++) {
-                    for (t9=0;t9<=t5+t7-1;t9++) {
-                      //  S[-t5][t7] = S[-t5][t9+-t5] + S[t9+-t5+1][t7] + S[-t5][t7];;
-                    }
-                 //   S[-t5][t7] = S[-t5][t7] + S[-t5+1][t7-1];;
-                    cout << t2 << " " << t4 << ":" << -t5 << " " << t7 << " uses " << -t5+1 << "|" << t7-1 << endl;
-                }
-            }
-        }
-    }
+
+
 
     return 0;
 }
