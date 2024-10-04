@@ -22,6 +22,7 @@ char SEQi[8] = {' ', 'G','G','U','C','C','A','C'};
 char SEQj[8] = {'G','G','U','C','C','A','C', ' '};
 string seq = "GGUCCAC";
 string seqq = "GUACGUACGUACGUACGUACGUACGUACGUAC";
+std::string large_string(10000, ' ');
 vector<vector<int>> S(seqq.length(), vector<int>(seqq.length()));
 vector<vector<int>> B(seqq.length(), vector<int>(seqq.length()));
 
@@ -186,27 +187,39 @@ codegen S;
     for (int c0 = 0; c0 <= (N - 1)/16; c0 += 1)  // serial loop
  //    #pragma omp parallel for
         for (int c1 = c0; c1 <= min((N - 1) / 16, (N + c0 - 2 )/ 16); c1 += 1) // parallel loop  blocks
-            for (int c2 = max(1, 16 * c0 - 15); c2 <= min(16 * c0 + 15, N + 16 * c0 - 16 * c1 - 1); c2 += 1) { // serial loop
+        {
+            int i = c1*16;
+            int j = i-c0*16;
+            cout << "\n -------- NEW BLOCK CORNER " << j << "," << i << endl;
+
+            for (int c2 = max(1, 16 * c0 - 15);
+                 c2 <= min(16 * c0 + 15, N + 16 * c0 - 16 * c1 - 1); c2 += 1) { // serial loop
                 if (c0 >= 1) {
-                //    #pragma omp parallel for
-                    for (int c3 = max(16 * c1, -16 * c0 + 16 * c1 + c2); c3 <= min(min(N - 1, 16 * c1 + 15), -16 * c0 + 16 * c1 + c2 + 15); c3 += 1) {   // parallel loop threads
+                    //    #pragma omp parallel for
+                    for (int c3 = max(16 * c1, -16 * c0 + 16 * c1 + c2); c3 <= min(min(N - 1, 16 * c1 + 15),
+                                                                                   -16 * c0 + 16 * c1 + c2 +
+                                                                                   15); c3 += 1) {   // parallel loop threads
                         for (int c4 = 0; c4 < c2; c4 += 1) // serial
-                            B[-c2 + c3][c3] = max(B[-c2+c3][-c2+c3+c4] + B[-c2 + c3 + c4 + 1][c3], B[-c2 + c3][c3]);
-                        B[-c2 + c3][c3] = max(B[-c2 + c3][c3],  B[-c2 + c3 + 1][c3 - 1] + paired(seqq[-c2 + c3], seqq[c3]));
+                            B[-c2 + c3][c3] = max(B[-c2 + c3][-c2 + c3 + c4] + B[-c2 + c3 + c4 + 1][c3],
+                                                  B[-c2 + c3][c3]);
+                        B[-c2 + c3][c3] = max(B[-c2 + c3][c3],
+                                              B[-c2 + c3 + 1][c3 - 1] + paired(seqq[-c2 + c3], seqq[c3]));
                         cout << c0 << " " << c1 << " " << c2 << " " << c3 << ": " << -c2 + c3 << " " << c3 << endl;
                     }
                 } else {
-                  //  #pragma omp parallel for
+                    //  #pragma omp parallel for
                     for (int c3 = 16 * c1 + c2; c3 <= min(N - 1, 16 * c1 + 15); c3 += 1) {   // parallel loop threads
                         for (int c4 = 0; c4 < c2; c4 += 1) {  // serial
                             B[-c2 + c3][c3] = max(B[-c2 + c3][-c2 + c3 + c4] + B[-c2 + c3 + c4 + 1][c3],
                                                   B[-c2 + c3][c3]);
                         }
-                        B[-c2 + c3][c3] = max(B[-c2 + c3][c3],  B[-c2 + c3 + 1][c3 - 1] + paired(seqq[-c2 + c3], seqq[c3]));
-                        cout << c0 << " " << c1 << " " << c2 <<  " " << c3 << ": " << -c2 + c3 << " " << c3 << endl;
+                        B[-c2 + c3][c3] = max(B[-c2 + c3][c3],
+                                              B[-c2 + c3 + 1][c3 - 1] + paired(seqq[-c2 + c3], seqq[c3]));
+                        cout << c0 << " " << c1 << " " << c2 << " " << c3 << ": " << -c2 + c3 << " " << c3 << endl;
                     }
                 }
             }
+        }
 
 
 
